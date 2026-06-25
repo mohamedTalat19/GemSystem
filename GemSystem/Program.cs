@@ -1,3 +1,8 @@
+using GemSystem.DAL.AppDbContexts;
+using GymSystem.DAL.Repositories;
+using GymSystem.DAL.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 namespace GemSystem
 {
     public class Program
@@ -8,6 +13,13 @@ namespace GemSystem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+
+            builder.Services.AddDbContext<GymDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             var app = builder.Build();
 

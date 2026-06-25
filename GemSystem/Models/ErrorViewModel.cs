@@ -1,4 +1,4 @@
-namespace GemSystem.Models
+namespace GemSystem.DAL.Models
 {
     public class ErrorViewModel
     {

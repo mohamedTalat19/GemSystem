@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using GemSystem.Models;
+using GemSystem.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GemSystem.Controllers
