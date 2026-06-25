@@ -1,7 +1,7 @@
-﻿using GemSystem.Models;
+﻿using GemSystem.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace GemSystem.Configurations
+namespace GemSystem.DAL.Configurations
 {
     public class PlanConfiguration : IEntityTypeConfiguration<Plan>
     {

@@ -1,14 +1,14 @@
-﻿using GemSystem.Configurations;
-using GemSystem.Models;
+﻿using GemSystem.DAL.Configurations;
+using GemSystem.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace GemSystem.AppDbContexts
+namespace GemSystem.DAL.AppDbContexts
 {
     public class GymDbContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public GymDbContext(DbContextOptions options) : base(options) 
         {
-            optionsBuilder.UseSqlServer("Server=.;Database=GymManagment;Trusted_Connection=true;TrustServerCertificate=true");
+            
         }
 
         public DbSet<Plan> Plans { get; set; }
