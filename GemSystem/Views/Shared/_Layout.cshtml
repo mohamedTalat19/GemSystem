@@ -38,7 +38,7 @@
               <a class="nav-link active px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Members</a>
+              <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="Members">Members</a>
             </li>
             <li class="nav-item">
               <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5" aria-current="page" href="#">Trainers</a>
@@ -75,5 +75,13 @@
 
     </main>
   </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+
   </body>
 </html>

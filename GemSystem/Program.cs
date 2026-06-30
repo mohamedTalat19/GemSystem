@@ -1,4 +1,6 @@
 using GemSystem.DAL.AppDbContexts;
+using GymSystem.BLL.Contracts;
+using GymSystem.BLL.Services;
 using GymSystem.DAL.Repositories;
 using GymSystem.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +19,9 @@ namespace GemSystem
             //builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            
+
+            builder.Services.AddScoped<IMemberService, MemberService>();
+
             builder.Services.AddDbContext<GymDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
