@@ -1,4 +1,6 @@
 using GemSystem.DAL.AppDbContexts;
+using GymSystem.BLL.Contracts;
+using GymSystem.BLL.Services;
 using GymSystem.DAL.Repositories;
 using GymSystem.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +16,13 @@ namespace GemSystem
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+            //builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            builder.Services.AddScoped<IMemberService, MemberService>();
+            builder.Services.AddScoped<IPlanService, PlanService>();
+            builder.Services.AddScoped<ITrainerService,TrainerService>();
 
             builder.Services.AddDbContext<GymDbContext>(options =>
             {

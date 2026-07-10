@@ -4,6 +4,7 @@ using GemSystem.DAL.AppDbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymSystem.DAL.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260704135747_FixConstraintEmail")]
+    partial class FixConstraintEmail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,15 +114,10 @@ namespace GymSystem.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("BookingDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GetDate()");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsAttended")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("SessionId", "MemberId");
 
@@ -297,11 +295,6 @@ namespace GymSystem.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GetDate()");
-
-                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("MemberId", "PlanId");
@@ -336,9 +329,6 @@ namespace GymSystem.DAL.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("TrainerId")
                         .HasColumnType("int");
 
@@ -354,9 +344,6 @@ namespace GymSystem.DAL.Migrations
                     b.ToTable("Sessions", t =>
                         {
                             t.HasCheckConstraint("CapacityConstraint", "EndDate > StartDate");
-
-                            t.Property("StartDate")
-                                .HasColumnName("StartDate1");
                         });
                 });
 
@@ -394,7 +381,7 @@ namespace GymSystem.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Specialties")
+                    b.Property<int>("Speciality")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
