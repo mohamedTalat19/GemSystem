@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GymSystem.DAL.Models
 {
-    public class Booking
+    public class Booking : BaseEntity
     {
         public IEnumerable<Member> Members { get; set; }
         public int MemberId { get; set; }

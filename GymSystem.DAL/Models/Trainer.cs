@@ -10,7 +10,9 @@ namespace GymSystem.DAL.Models
     public class Trainer : GymUser
     {
         //Rename Created At To HireDate
-        public Speciality Speciality { get; set; }
+        public Specialties Specialties { get; set; }
         public ICollection<Session> Sessions { get; set; }
+
+        
     }
 }

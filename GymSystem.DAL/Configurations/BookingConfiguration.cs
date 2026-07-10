@@ -13,7 +13,12 @@ namespace GymSystem.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Booking> builder)
         {
+            builder.Ignore(x => x.CreatedAt);
+            builder.Ignore(x => x.Id);
+
+
             builder.HasKey(x => new { x.SessionId, x.MemberId });
+            builder.Property(x => x.BookingDate).HasDefaultValueSql("GetDate()");
         }
     }
 }

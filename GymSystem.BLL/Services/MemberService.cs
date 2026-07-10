@@ -1,4 +1,5 @@
-﻿using GymSystem.BLL.Contracts;
+﻿using GemSystem.DAL.Models;
+using GymSystem.BLL.Contracts;
 using GymSystem.BLL.ViewModels;
 using GymSystem.DAL.Models;
 using GymSystem.DAL.Repositories.Interfaces;
@@ -14,10 +15,19 @@ namespace GymSystem.BLL.Services
     {
 
         private readonly IGenericRepository<Member> _membersRepo;
+        private readonly IGenericRepository<Membership> _membershipRepo;
+        private readonly IGenericRepository<Plan> _planRepo;
+        private readonly IGenericRepository<HealtRecord> _healtRecordRepo;
+        private readonly IGenericRepository<Booking> _bookingRepo;
 
-        public MemberService(IGenericRepository<Member> memberRepo)
+        public MemberService(IGenericRepository<Member> memberRepo, IGenericRepository<Membership> membershipRepo
+            , IGenericRepository<Plan> planRepo1, IGenericRepository<HealtRecord> healthRecordRepo, IGenericRepository<Booking> bookingRepo)
         {
             _membersRepo = memberRepo;
+            _membershipRepo = membershipRepo;
+            _planRepo = planRepo1;
+            _healtRecordRepo = healthRecordRepo;
+            _bookingRepo=bookingRepo;
         }
 
         public async Task<bool> CreateMemberAsync(CreateMemberViewModel model, CancellationToken ct)
@@ -75,6 +85,110 @@ namespace GymSystem.BLL.Services
 
             return memberViewModels;
             
+        }
+
+        public async Task<MemberDetailsViewModel?> GetMemberDetailsByIdAsync(int id, CancellationToken ct)
+        {
+            //Get member from Db
+            var member = await _membersRepo.GetByIdAsync(id , ct);
+
+            //if null return null
+            if (member == null) return null;
+
+            //map member Entity To MemberDetails View Model
+            var memberDetailsVM = new MemberDetailsViewModel
+            {
+                Id = member.Id,
+                Name = member.Name,
+                Email = member.Email,
+                Gender = member.Gender,
+                Phone = member.Phone,
+                Photo = member.Photo,
+                Address = $"{member.Address.BuildingNumber}-{member.Address.Street}-{member.Address.City}"
+            };
+
+            //Active Membership
+            var activeMembership = await _membershipRepo.FirstOrDefaultAsync(x => x.MemberId == member.Id && x.EndDate > DateTime.Now, ct);
+
+            if(activeMembership != null)
+            {
+                //Plan name
+                var plan = await _planRepo.GetByIdAsync(activeMembership.PlanId, ct);
+                memberDetailsVM.PlanName = plan.Name;
+
+                //assign membershipStartDate & membershipEndDate
+                memberDetailsVM.MembershipStartDate = activeMembership.StartDate.ToString();
+                memberDetailsVM.MembershipEndDate = activeMembership.EndDate.ToString();
+
+            }
+
+           //return MemberDetailsViewModel
+            return memberDetailsVM;
+        }
+
+        public async Task<HealthRecordViewModel?> GetMemberHealthRecordAsync(int memberId, CancellationToken ct)
+        {
+            var healthRecord = await _healtRecordRepo.FirstOrDefaultAsync(x => x.MemberId == memberId, ct);
+            if (healthRecord == null) return null;
+            return new HealthRecordViewModel
+            {
+                Weight = healthRecord.Wieght,
+                Height = healthRecord.Height,
+                BloodType = healthRecord.BloodType,
+                Notes = healthRecord.Notes,
+            };
+        }
+
+        public async Task<MemberToUpdateViewModel?> GetMemberToUpdateAsync(int memberId, CancellationToken ct)
+        {
+            var member = await _membersRepo.GetByIdAsync(memberId , ct);
+            if (member == null) return null;
+            return new MemberToUpdateViewModel
+            {
+                Name = member.Name,
+                Phone = member.Phone,
+                Email = member.Email,
+                Photo = member.Photo,
+                Street = member.Address.Street,
+                City = member.Address.City,
+                BuildingNumber = member.Address.BuildingNumber
+            };
+        }
+
+        public async Task<bool> RemveMemberAsync(int id, CancellationToken ct)
+        {
+            var member = await _membersRepo.GetByIdAsync(id, ct);
+            if (member == null) return false;
+
+            var hasFutureBookings = await _bookingRepo.AnyAsync(x => x.MemberId == id && x.BookingDate > DateTime.Now , ct);
+            if (hasFutureBookings) return false;
+
+            var result = await _membersRepo.DeleteAsync(member, ct);
+            return result > 0;
+
+            
+        }
+
+        public async Task<bool> UpdateMemberAsync(int id, MemberToUpdateViewModel model, CancellationToken ct)
+        {
+            var member = await _membersRepo.GetByIdAsync(id, ct);
+            if (member == null) return false;
+
+            var emailExits = await _membersRepo.AnyAsync(x => x.Email == model.Email && x.Id != model.Id, ct);
+            var phoneExits = await _membersRepo.AnyAsync(x => x.Phone == model.Phone && x.Id != model.Id, ct);
+
+            if(emailExits ||  phoneExits) return false;
+           
+            member.Email = model.Email;
+            member.Phone = model.Phone;
+            member.Address.Street = model.Street;
+            member.Address.City = model.City;
+            member.Address.BuildingNumber = model.BuildingNumber;
+            member.UpdatedAt = DateTime.Now;
+
+            var result = await _membersRepo.UpdateAsync(member, ct);
+            return result > 0;
+
         }
     }
 }

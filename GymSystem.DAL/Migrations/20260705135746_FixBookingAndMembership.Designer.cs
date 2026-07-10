@@ -4,6 +4,7 @@ using GemSystem.DAL.AppDbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymSystem.DAL.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260705135746_FixBookingAndMembership")]
+    partial class FixBookingAndMembership
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -336,9 +339,6 @@ namespace GymSystem.DAL.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("TrainerId")
                         .HasColumnType("int");
 
@@ -354,9 +354,6 @@ namespace GymSystem.DAL.Migrations
                     b.ToTable("Sessions", t =>
                         {
                             t.HasCheckConstraint("CapacityConstraint", "EndDate > StartDate");
-
-                            t.Property("StartDate")
-                                .HasColumnName("StartDate1");
                         });
                 });
 
@@ -394,7 +391,7 @@ namespace GymSystem.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Specialties")
+                    b.Property<int>("Speciality")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")

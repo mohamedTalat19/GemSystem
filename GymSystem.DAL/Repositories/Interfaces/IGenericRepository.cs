@@ -18,5 +18,12 @@ namespace GymSystem.DAL.Repositories.Interfaces
 
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct);
 
+        Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct);
+
+
+
+
+
+
     }
 }

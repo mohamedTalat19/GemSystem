@@ -38,6 +38,11 @@ namespace GymSystem.DAL.Repositories
             return await _dbContext.SaveChangesAsync(ct);
         }
 
+        public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct)
+        {
+            return await _set.FirstOrDefaultAsync(predicate, ct);
+        }
+
         public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken ct)
         {
             return await _set.ToListAsync(ct);

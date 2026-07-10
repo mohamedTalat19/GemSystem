@@ -17,5 +17,6 @@ namespace GymSystem.DAL.Models
         public int TrainerId { get; set; }
         public Category Category { get; set; }
         public int CategoryId { get; set; }
+        public DateTime StartDate { get; set; }
     }
 }

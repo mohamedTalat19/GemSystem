@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GymSystem.DAL.Models
 {
-    public class Membership
+    public class Membership : BaseEntity
     {
         public IEnumerable<Member> Members { get; set; } = [];
         public int MemberId { get; set; }
