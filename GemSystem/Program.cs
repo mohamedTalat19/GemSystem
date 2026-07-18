@@ -1,15 +1,20 @@
+using AutoMapper;
 using GemSystem.DAL.AppDbContexts;
+using GemSystem.Extentions;
 using GymSystem.BLL.Contracts;
+using GymSystem.BLL.MappingProfiles;
 using GymSystem.BLL.Services;
+using GymSystem.DAL;
 using GymSystem.DAL.Repositories;
 using GymSystem.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace GemSystem
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +26,13 @@ namespace GemSystem
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             builder.Services.AddScoped<IMemberService, MemberService>();
+            builder.Services.AddScoped<IUnitOfWork , UnitOfWork>();
             builder.Services.AddScoped<IPlanService, PlanService>();
             builder.Services.AddScoped<ITrainerService,TrainerService>();
+            builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+            builder.Services.AddScoped<ISessionService,SessionSevice >();
+            builder.Services.AddAutoMapper(m => m.AddProfile(new MappingProfile()));
+            builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
             builder.Services.AddDbContext<GymDbContext>(options =>
             {
@@ -30,6 +40,8 @@ namespace GemSystem
             });
 
             var app = builder.Build();
+
+            await app.IntializeDatabaseAsync();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

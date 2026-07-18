@@ -1,4 +1,5 @@
 ﻿using GymSystem.BLL.Contracts;
+using GymSystem.BLL.Results;
 using GymSystem.BLL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -35,13 +36,13 @@ namespace GemSystem.Controllers
 
             var result = await _memberService.CreateMemberAsync(model, ct);
 
-            if (result)
+            if (result.success)
             {
                 TempData["SuccessMessage"] = "Member Created Successfully";
             }
             else
             {
-                TempData["ErrorMessage"] = "Member Creation Failed";
+                TempData["ErrorMessage"] = result.error;
             }
 
             return RedirectToAction(nameof(Index));
@@ -56,7 +57,7 @@ namespace GemSystem.Controllers
             var member = await _memberService.GetMemberDetailsByIdAsync(id, ct);
             if (member == null)
             {
-                TempData["ErrorMessage"] = "Member Was not Found";
+                TempData["ErrorMessage"] = "Member not found.";
                 return RedirectToAction(nameof(Index));
             }
             return View(member);
@@ -104,13 +105,13 @@ namespace GemSystem.Controllers
 
             var result = await _memberService.UpdateMemberAsync(id, model, ct);
 
-          if (result)
+          if (result.success)
             {
                 TempData["SuccessMessage"] = "Member Updated Successfully";
             }
             else
             {
-                TempData["ErorrMessage"] = "Member Update Failed";
+                TempData["ErorrMessage"] = result.error;
             }
 
             return RedirectToAction(nameof(Index));
@@ -144,7 +145,7 @@ namespace GemSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed([FromRoute] int id , CancellationToken ct)
         {
             var result = await _memberService.RemveMemberAsync(id, ct);
-            if (result)
+            if (result.success)
             {
                 TempData["SuccessMessage"] = "Member Deleted Successfully";
             }

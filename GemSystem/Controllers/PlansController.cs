@@ -60,10 +60,10 @@ namespace GemSystem.DAL.Controllers
             
             var result = await _planService.UpdatePlanAsync(id,model ,ct);
 
-            if (result)
+            if (result.success)
                 TempData["SuccessMessage"] = "Plan updated successfully";
             else
-                TempData["ErrorMessage"] = "Plan Failed To update";
+                TempData["ErrorMessage"] = result.error;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -71,10 +71,10 @@ namespace GemSystem.DAL.Controllers
         public async Task<IActionResult> Activate(int id , CancellationToken ct)
         {
             var result = await _planService.ToggleActivationAsync(id, ct);
-            if(result)
+            if(result.success)
                 TempData["SuccessMessage"] = "Plan status changed";
             else
-                TempData["ErrorMessage"] = "Failed To Toggle Plan Status";
+                TempData["ErrorMessage"] = result.error;
             return RedirectToAction(nameof(Index));
         }
 

@@ -25,14 +25,14 @@ namespace GymSystem.Controllers
             if (!ModelState.IsValid) return View(model);
 
             var result = await _trainerService.CreateTrainerAsync(model, ct);
-            if (result)
+            if (result.success)
             {
 
                 TempData["SuccessMessage"] = "Trainer Created Successfully";
                 return RedirectToAction(nameof(Index));
 
             }
-            TempData["ErrorMessage"] = "Trainer Creation Failed";
+            TempData["ErrorMessage"] = result.error;
             return View(model);
         }
 
@@ -43,7 +43,7 @@ namespace GymSystem.Controllers
             var trainer = await _trainerService.GetTrainersDetailsAsync(id, ct);
             if (trainer is null)
             {
-                TempData["ErrorMessage"] = "Trainer not Found";
+                TempData["ErrorMessage"] =  "Trainer not found.";
                 return RedirectToAction(nameof(Index));
 
             }
@@ -72,12 +72,12 @@ namespace GymSystem.Controllers
             if (!ModelState.IsValid) return View(model);
 
             var result = await _trainerService.UpdateTrainerDetailsAsync( id, model, ct);
-            if (result)
-            
+            if (result.success)
+
                 TempData["SuccessMessage"] = "Trainer updated Successfully";
             else
 
-                TempData["ErrorMessage"] = "Trainer update Failed";
+                TempData["ErrorMessage"] = result.error;
             return RedirectToAction(nameof(Index));
         }
 
@@ -112,12 +112,12 @@ namespace GymSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id , CancellationToken ct)
         {
             var result = await _trainerService.RemioveTrainerAsync(id, ct);
-            if (result)
+            if (result.success)
 
                 TempData["SuccessMessage"] = "Trainer deleted Successfully";
             else
 
-                TempData["ErrorMessage"] = "Trainer deletion Failed";
+                TempData["ErrorMessage"] = result.error;
             return RedirectToAction(nameof(Index));
 
         }
