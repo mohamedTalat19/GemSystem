@@ -5,8 +5,10 @@ using GymSystem.BLL.Contracts;
 using GymSystem.BLL.MappingProfiles;
 using GymSystem.BLL.Services;
 using GymSystem.DAL;
+using GymSystem.DAL.Models;
 using GymSystem.DAL.Repositories;
 using GymSystem.DAL.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -33,6 +35,20 @@ namespace GemSystem
             builder.Services.AddScoped<ISessionService,SessionSevice >();
             builder.Services.AddAutoMapper(m => m.AddProfile(new MappingProfile()));
             builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+            builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
+            {
+                //opt.Password.RequireUppercase = true; //Default
+                //opt.Password.RequireLowercase = true; //Default
+                //opt.Password.RequiredLength = 6; //Default
+            }).AddEntityFrameworkStores<GymDbContext>();
+
+            //builder.Services.ConfigureApplicationCookie(opt =>
+            //{
+            //    opt.LoginPath = "/account/login";  //Default
+            //    opt.AccessDeniedPath = "/account/accessdenied"; //Default
+            //});
 
             builder.Services.AddDbContext<GymDbContext>(options =>
             {
@@ -60,7 +76,7 @@ namespace GemSystem
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=account}/{action=login}/{id?}");
 
             app.Run();
         }

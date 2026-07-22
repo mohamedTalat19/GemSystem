@@ -1,19 +1,23 @@
 ﻿using GymSystem.BLL.Contracts;
 using GymSystem.BLL.Results;
 using GymSystem.BLL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace GemSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class MembersController : Controller
     {
 
         private readonly IMemberService _memberService;
+        private readonly IAttachmentService _attachmentService;
 
-        public MembersController(IMemberService memberService)
+        public MembersController(IMemberService memberService, IAttachmentService attachmentService)
         {
             _memberService = memberService;
+            _attachmentService=attachmentService;
         }
 
 
@@ -117,11 +121,6 @@ namespace GemSystem.Controllers
             return RedirectToAction(nameof(Index));
 
         }
-
-
-
-
-
         #endregion
 
         #region Delete
@@ -155,18 +154,17 @@ namespace GemSystem.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-
-
-
         }
 
-
-
-
-
-
-
-
         #endregion
+
+        public async Task<IActionResult> Picture(int id, CancellationToken ct)
+        {
+            var member = await _memberService.GetMemberDetailsByIdAsync(id, ct);
+            if (member == null || string.IsNullOrWhiteSpace(member.Photo)) return NotFound();
+
+            var result = _attachmentService.GetFile(member.Photo, "MemberPhotos");
+            return result == null ? NotFound() : File(result.Value.stream, result.Value.contentType);
+        }
     }
 }

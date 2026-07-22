@@ -2,10 +2,12 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using GemSystem.DAL.Models;
 using GymSystem.BLL.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GemSystem.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -23,6 +25,8 @@ namespace GemSystem.Controllers
             return View(data);
         }
 
+
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();

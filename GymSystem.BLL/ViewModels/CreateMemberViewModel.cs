@@ -6,12 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GymSystem.BLL.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 
 namespace GymSystem.BLL.ViewModels
 {
     public class CreateMemberViewModel
     {
+        [Required]
+        [Display(Name ="Prfile Photo")]
+        public IFormFile PhotoFile { get; set; }
+
         [Required(ErrorMessage = "Name Is Required")]
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Name can only contain letters and spaces")]
         public string Name { get; set; } = default!;

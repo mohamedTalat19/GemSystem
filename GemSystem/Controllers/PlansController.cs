@@ -5,11 +5,13 @@ using GymSystem.BLL.Services;
 using GymSystem.BLL.ViewModels;
 using GymSystem.DAL.Repositories;
 using GymSystem.DAL.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GemSystem.DAL.Controllers
 {
+    [Authorize(Roles = "SuperAdmin")]
     public class PlansController : Controller
     {
 

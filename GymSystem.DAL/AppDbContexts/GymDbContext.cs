@@ -1,12 +1,13 @@
 ﻿using GemSystem.DAL.Configurations;
 using GemSystem.DAL.Models;
 using GymSystem.DAL.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace GemSystem.DAL.AppDbContexts
 {
-    public class GymDbContext : DbContext
+    public class GymDbContext : IdentityDbContext<ApplicationUser>
     {
         public GymDbContext(DbContextOptions options) : base(options) 
         {
@@ -22,6 +23,8 @@ namespace GemSystem.DAL.AppDbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

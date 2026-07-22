@@ -18,11 +18,13 @@ namespace GymSystem.BLL.Services
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IAttachmentService _attachmentService;
 
-        public MemberService(IUnitOfWork unitOfWork , IMapper mapper)
+        public MemberService(IUnitOfWork unitOfWork , IMapper mapper , IAttachmentService attachmentService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _attachmentService=attachmentService;
         }
 
         public async Task<Result> CreateMemberAsync(CreateMemberViewModel model, CancellationToken ct)
@@ -35,8 +37,19 @@ namespace GymSystem.BLL.Services
                 return Result.Fail("A member with this phone number already exists.");
 
             var member = _mapper.Map<Member>(model);
+
+            var fileName = await _attachmentService
+                .UploadAsync(model.PhotoFile.OpenReadStream(), model.PhotoFile.FileName, "MemberPhotos", ct);
+            if (fileName == null) return Result.Fail("Failed to upload member photo");
+            member.Photo = fileName;
+
+
             _membersRepo.Add(member);
             var result = await _unitOfWork.SaveChangesAsync(ct);
+
+            if (result == 0)
+                _attachmentService.Delete(fileName, "MemberPhotos");
+            
             return Result.Ok();
 
         }
@@ -123,6 +136,9 @@ namespace GymSystem.BLL.Services
             var hasFutureBookings = await _bookingRepo.AnyAsync(x => x.MemberId == id && x.BookingDate > DateTime.Now , ct);
             if (hasFutureBookings) return Result.NotFound("Cannot Delete member because have future Bookings");
 
+            _attachmentService.Delete(member?.Photo ?? "", "MemberPhotos");
+
+            _memberRepo.Delete(member);
             var result = await _unitOfWork.SaveChangesAsync(ct);
 
             return result > 0 ? Result.Ok() : Result.Fail("Failed To delete member");
